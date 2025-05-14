@@ -2,24 +2,115 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>报名成功</title>
+  <title>提交成功 / Submission Complete</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Petersen_graph.svg/800px-Petersen_graph.svg.png') no-repeat center top;
+      background-size: contain;
       background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #333;
       text-align: center;
-      margin-top: 100px;
     }
+
+    .container {
+      max-width: 600px;
+      margin: 100px auto;
+      padding: 40px;
+      background: #ffffffdd;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      backdrop-filter: blur(2px);
+      position: relative;
+    }
+
     h1 {
-      color: #2ecc71;
+      font-size: 28px;
+      color: #2c3e50;
     }
+
     p {
+      margin-top: 20px;
+      font-size: 16px;
       color: #555;
     }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #3498db;
+      user-select: none;
+    }
+
+    .lang-toggle::before {
+      content: "🌐 ";
+    }
+
+    .button {
+      margin-top: 30px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .button:hover {
+      background-color: #2980b9;
+    }
   </style>
+
+  <script>
+    let language = "zh";
+
+    function toggleLanguage() {
+      language = (language === "zh") ? "en" : "zh";
+
+      const labels = {
+        zh: {
+          title: "🎉 提交成功",
+          message: "感谢你的提交，我们会通过邮箱与您联系。<br>5 秒后将自动返回首页。",
+          buttonText: "返回首页",
+          langBtn: "English"
+        },
+        en: {
+          title: "🎉 Submission Successful",
+          message: "Thank you! Your information has been received. We'll contact you via email.<br>You will be redirected in 5 seconds.",
+          buttonText: "Return to Homepage",
+          langBtn: "中文"
+        }
+      };
+
+      const L = labels[language];
+      document.querySelector("h1").textContent = L.title;
+      document.getElementById("message").innerHTML = L.message;
+      document.getElementById("home-btn").textContent = L.buttonText;
+      document.getElementById("lang").textContent = L.langBtn;
+    }
+
+    // 自动跳转
+    setTimeout(() => {
+      window.location.href = "https://elainegan-2020.github.io/bupt-combinatorics-summer-school/"; 
+    }, 5000);
+  </script>
 </head>
 <body>
-  <h1>🎉 报名成功！</h1>
-  <p>感谢你的报名，我们会通过邮箱联系你。</p>
+  <div class="container">
+    <div id="lang" class="lang-toggle" onclick="toggleLanguage()">English</div>
+    <h1>🎉 提交成功</h1>
+    <p id="message">感谢你的提交，我们会通过邮箱与您联系。<br>5 秒后将自动返回首页。</p>
+    <a id="home-btn" href="index.html" class="button">返回首页</a>
+  </div>
 </body>
 </html>
