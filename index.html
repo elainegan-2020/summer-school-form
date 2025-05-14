@@ -156,8 +156,9 @@
       })
       .then(response => {
         if (response.ok) {
-          window.location.href = "success.html";
-        } else {
+  const targetPage = language === "zh" ? "success-zh.html" : "success-en.html";
+  window.location.href = targetPage;
+} else {
           alert(language === "zh" ? "提交失败，请稍后再试。" : "Submission failed. Please try again.");
           resetSubmit();
         }
