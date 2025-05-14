@@ -26,20 +26,6 @@
       position: relative;
     }
 
-    .lang-toggle {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #3498db;
-      user-select: none;
-    }
-
-    .lang-toggle::before {
-      content: "🌐 ";
-    }
-
     h1 {
       text-align: center;
       color: #2c3e50;
@@ -95,7 +81,13 @@
   </style>
 
   <script>
-    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m"; 
+    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m";
+    let language = "zh";
+
+    function toggleOtherGrade(select) {
+      const otherInput = document.getElementById("grade_other");
+      otherInput.style.display = select.value === "其他" ? "block" : "none";
+    }
 
     async function submitForm(event) {
       event.preventDefault();
@@ -108,6 +100,16 @@
       const tel = document.getElementById("tel").value.trim();
       const email = document.getElementById("email").value.trim();
       const idNumber = document.getElementById("id_number").value.trim();
+      const grade = document.getElementById("grade").value === "其他"
+        ? document.getElementById("grade_other").value.trim()
+        : document.getElementById("grade").value;
+
+      const fileInput = document.getElementById("cv");
+      if (fileInput.files.length > 0 && fileInput.files[0].type !== "application/pdf") {
+        alert(language === "zh" ? "请上传PDF格式的简历文件。" : "Please upload a PDF resume.");
+        resetSubmit();
+        return;
+      }
 
       if (!/^\d{11}$/.test(tel)) {
         alert(language === "zh" ? "请输入正确的11位手机号码" : "Please enter a valid 11-digit phone number.");
@@ -129,7 +131,6 @@
 
       const checkUrl = `${API_URL}/search?ID_Number=${encodeURIComponent(idNumber)}`;
       const existing = await fetch(checkUrl).then(res => res.json());
-
       if (existing.length > 0) {
         alert(language === "zh" ? "该证件号已经提交过报名，请勿重复提交。" : "This ID number has already been registered.");
         resetSubmit();
@@ -141,6 +142,7 @@
           Name: name,
           Gender: document.getElementById("gender").value,
           School: document.getElementById("school").value.trim(),
+          Grade: grade,
           Tel: tel,
           Email: email,
           ID_Number: idNumber,
@@ -153,12 +155,11 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
-      })
-      .then(response => {
+      }).then(response => {
         if (response.ok) {
-  const targetPage = language === "zh" ? "success-zh.html" : "success-en.html";
-  window.location.href = targetPage;
-} else {
+          const targetPage = language === "zh" ? "success-zh.html" : "success-en.html";
+          window.location.href = targetPage;
+        } else {
           alert(language === "zh" ? "提交失败，请稍后再试。" : "Submission failed. Please try again.");
           resetSubmit();
         }
@@ -170,59 +171,11 @@
       submitBtn.value = language === "zh" ? "提交报名" : "Submit";
       submitBtn.disabled = false;
     }
-
-    let language = "zh";
-    function toggleLanguage() {
-      language = (language === "zh") ? "en" : "zh";
-
-      const labels = {
-        zh: {
-          title: "暑期学校报名表",
-          submit: "提交报名",
-          note: "请确认信息准确无误后再提交。",
-          fields: [
-            "姓名：", "性别：", "学校/单位：", "电话号码：",
-            "邮箱：", "证件号：", "是否需要住宿：", "是否全程参加："
-          ],
-          gender: ["男", "女"],
-          housing: ["是", "否"],
-          attendance: ["是", "否"]
-        },
-        en: {
-          title: "Summer School Registration",
-          submit: "Submit",
-          note: "Please double-check your info before submission.",
-          fields: [
-            "Name:", "Gender:", "School / Institution:", "Phone:",
-            "Email:", "ID Number:", "Need housing?", "Attend full time?"
-          ],
-          gender: ["Male", "Female"],
-          housing: ["Yes", "No"],
-          attendance: ["Yes", "No"]
-        }
-      };
-
-      const L = labels[language];
-      document.querySelector("h1").textContent = L.title;
-      document.querySelector("input[type=submit]").value = L.submit;
-      document.querySelector(".note").textContent = L.note;
-      document.querySelectorAll("label").forEach((el, i) => el.textContent = L.fields[i]);
-
-      document.getElementById("gender").options[0].text = L.gender[0];
-      document.getElementById("gender").options[1].text = L.gender[1];
-      document.getElementById("housing").options[0].text = L.housing[0];
-      document.getElementById("housing").options[1].text = L.housing[1];
-      document.getElementById("attendance").options[0].text = L.attendance[0];
-      document.getElementById("attendance").options[1].text = L.attendance[1];
-
-      document.getElementById("lang").textContent = language === "zh" ? "English" : "中文";
-    }
   </script>
 </head>
 
 <body>
   <div class="container">
-    <div id="lang" class="lang-toggle" onclick="toggleLanguage()">English</div>
     <h1>暑期学校报名表</h1>
     <form id="signup-form" onsubmit="submitForm(event)">
       <label for="name">姓名：</label>
@@ -236,6 +189,16 @@
 
       <label for="school">学校/单位：</label>
       <input type="text" id="school" required>
+
+      <label for="grade">年级：</label>
+      <select id="grade" onchange="toggleOtherGrade(this)" required>
+        <option value="硕士一年级">硕士一年级</option>
+        <option value="硕士二年级">硕士二年级</option>
+        <option value="硕士三年级">硕士三年级</option>
+        <option value="博士">博士</option>
+        <option value="其他">其他</option>
+      </select>
+      <input type="text" id="grade_other" placeholder="请注明具体年级" style="display:none; margin-top:10px;">
 
       <label for="tel">电话号码：</label>
       <input type="tel" id="tel" required>
@@ -257,6 +220,9 @@
         <option value="是">是</option>
         <option value="否">否</option>
       </select>
+
+      <label for="cv">个人简历（仅限PDF）：</label>
+      <input type="file" id="cv" accept=".pdf">
 
       <input type="submit" value="提交报名">
     </form>
