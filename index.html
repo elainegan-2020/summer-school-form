@@ -47,13 +47,6 @@
       font-size: 26px;
     }
 
-    #signup-count {
-      text-align: center;
-      font-size: 16px;
-      margin-bottom: 20px;
-      color: #555;
-    }
-
     label {
       display: block;
       margin-top: 20px;
@@ -102,14 +95,7 @@
   </style>
 
   <script>
-    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m";
-
-    async function fetchSignupCount() {
-      const data = await fetch(`${API_URL}`).then(res => res.json());
-      document.getElementById("signup-number").textContent = data.length;
-    }
-
-    fetchSignupCount();
+    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m"; 
 
     async function submitForm(event) {
       event.preventDefault();
@@ -199,9 +185,7 @@
           ],
           gender: ["男", "女"],
           housing: ["是", "否"],
-          attendance: ["是", "否"],
-          countPrefix: "当前已有 ",
-          countSuffix: " 人完成报名"
+          attendance: ["是", "否"]
         },
         en: {
           title: "Summer School Registration",
@@ -213,9 +197,7 @@
           ],
           gender: ["Male", "Female"],
           housing: ["Yes", "No"],
-          attendance: ["Yes", "No"],
-          countPrefix: "Currently ",
-          countSuffix: " participant(s) registered"
+          attendance: ["Yes", "No"]
         }
       };
 
@@ -233,9 +215,6 @@
       document.getElementById("attendance").options[1].text = L.attendance[1];
 
       document.getElementById("lang").textContent = language === "zh" ? "English" : "中文";
-      fetchSignupCount().then(() => {
-        document.getElementById("signup-count").innerHTML = L.countPrefix + "<strong id='signup-number'>" + document.getElementById("signup-number").textContent + "</strong>" + L.countSuffix;
-      });
     }
   </script>
 </head>
@@ -244,9 +223,6 @@
   <div class="container">
     <div id="lang" class="lang-toggle" onclick="toggleLanguage()">English</div>
     <h1>暑期学校报名表</h1>
-    <div id="signup-count">
-      当前已有 <strong id="signup-number">…</strong> 人完成报名
-    </div>
     <form id="signup-form" onsubmit="submitForm(event)">
       <label for="name">姓名：</label>
       <input type="text" id="name" required>
