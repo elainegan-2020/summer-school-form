@@ -87,101 +87,95 @@
   </style>
 
   <script>
-    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m";
+  const API_URL = "🔴你的 SheetDB API 地址🔴";
 
-    async function submitForm(event) {
-      event.preventDefault();
+  // 显示当前报名人数
+  async function fetchSignupCount() {
+    const data = await fetch(`${API_URL}`).then(res => res.json());
+    document.getElementById("signup-number").textContent = data.length;
+  }
 
-      const idNumber = document.getElementById("id_number").value;
-      const checkUrl = `${API_URL}/search?ID_Number=${encodeURIComponent(idNumber)}`;
+  // 初始化执行
+  fetchSignupCount();
 
-      const existing = await fetch(checkUrl).then(res => res.json());
+  // 表单提交逻辑
+  async function submitForm(event) {
+    event.preventDefault();
 
-      if (existing.length > 0) {
-        alert(language === "zh" ? "该证件号已经提交过报名，请勿重复提交。" : "This ID number has already been registered.");
-        return;
+    const submitBtn = document.querySelector('input[type="submit"]');
+    submitBtn.value = "提交中…";
+    submitBtn.disabled = true;
+
+    // 获取字段值
+    const name = document.getElementById("name").value.trim();
+    const tel = document.getElementById("tel").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const idNumber = document.getElementById("id_number").value.trim();
+
+    // 基本校验
+    if (!/^\d{11}$/.test(tel)) {
+      alert("请输入正确的11位手机号码");
+      submitBtn.value = "提交报名";
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (!/^[\w\.-]+@[\w\.-]+\.\w+$/.test(email)) {
+      alert("请输入有效的邮箱地址");
+      submitBtn.value = "提交报名";
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (!idNumber) {
+      alert("证件号不能为空");
+      submitBtn.value = "提交报名";
+      submitBtn.disabled = false;
+      return;
+    }
+
+    // 检查是否重复提交
+    const checkUrl = `${API_URL}/search?ID_Number=${encodeURIComponent(idNumber)}`;
+    const existing = await fetch(checkUrl).then(res => res.json());
+
+    if (existing.length > 0) {
+      alert("该证件号已经提交过报名，请勿重复提交。");
+      submitBtn.value = "提交报名";
+      submitBtn.disabled = false;
+      return;
+    }
+
+    // 构造数据
+    const data = {
+      data: {
+        Name: name,
+        Gender: document.getElementById("gender").value,
+        School: document.getElementById("school").value.trim(),
+        Tel: tel,
+        Email: email,
+        ID_Number: idNumber,
+        Housing: document.getElementById("housing").value,
+        Full_Attendance: document.getElementById("attendance").value
       }
+    };
 
-      const data = {
-        data: {
-          Name: document.getElementById("name").value,
-          Gender: document.getElementById("gender").value,
-          School: document.getElementById("school").value,
-          Tel: document.getElementById("tel").value,
-          Email: document.getElementById("email").value,
-          ID_Number: idNumber,
-          Housing: document.getElementById("housing").value,
-          Full_Attendance: document.getElementById("attendance").value
-        }
-      };
-
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(response => {
-        if (response.ok) {
-          window.location.href = "success.html";
-        } else {
-          alert(language === "zh" ? "提交失败，请稍后再试。" : "Submission failed. Please try again.");
-        }
-      });
-    }
-
-    let language = "zh";
-
-    function toggleLanguage() {
-      language = (language === "zh") ? "en" : "zh";
-
-      const labels = {
-        zh: {
-          title: "暑期学校报名表",
-          submit: "提交报名",
-          note: "请确认信息准确无误后再提交。",
-          fields: [
-            "🧑‍🎓 姓名：", "🚻 性别：", "🏫 学校/单位：", "📞 电话号码：",
-            "✉️ 邮箱：", "🆔 证件号：", "🏨 是否需要住宿：", "📅 是否全程参加："
-          ],
-          gender: ["男", "女"],
-          housing: ["是", "否"],
-          attendance: ["是", "否"]
-        },
-        en: {
-          title: "Summer School Registration",
-          submit: "Submit",
-          note: "Please double-check your info before submission.",
-          fields: [
-            "🧑‍🎓 Name:", "🚻 Gender:", "🏫 School / Institution:", "📞 Phone:",
-            "✉️ Email:", "🆔 ID Number:", "🏨 Need housing?", "📅 Attend full time?"
-          ],
-          gender: ["Male", "Female"],
-          housing: ["Yes", "No"],
-          attendance: ["Yes", "No"]
-        }
-      };
-
-      const L = labels[language];
-      document.querySelector("h1").textContent = L.title;
-      document.querySelector("input[type=submit]").value = L.submit;
-      document.querySelector(".note").textContent = L.note;
-      document.querySelectorAll("label").forEach((el, i) => el.textContent = L.fields[i]);
-
-      const gender = document.getElementById("gender");
-      gender.options[0].text = L.gender[0];
-      gender.options[1].text = L.gender[1];
-
-      const housing = document.getElementById("housing");
-      housing.options[0].text = L.housing[0];
-      housing.options[1].text = L.housing[1];
-
-      const attendance = document.getElementById("attendance");
-      attendance.options[0].text = L.attendance[0];
-      attendance.options[1].text = L.attendance[1];
-
-      document.getElementById("lang").textContent = language === "zh" ? "English" : "中文";
-    }
-  </script>
+    // 提交
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = "success.html"; // 成功跳转
+      } else {
+        alert("提交失败，请稍后再试。");
+        submitBtn.value = "提交报名";
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
 </head>
 
 <body>
