@@ -7,7 +7,9 @@
   <style>
     body {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: #f4f6f8;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Petersen_graph.svg/800px-Petersen_graph.svg.png') no-repeat center top;
+      background-size: contain;
+      background-color: #f4f6f8;
       margin: 0;
       padding: 0;
       color: #333;
@@ -17,7 +19,8 @@
       max-width: 90%;
       margin: 60px auto;
       padding: 30px 40px;
-      background: #ffffff;
+      background: #ffffffdd;
+      backdrop-filter: blur(2px);
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       position: relative;
@@ -30,6 +33,11 @@
       font-size: 14px;
       cursor: pointer;
       color: #3498db;
+      user-select: none;
+    }
+
+    .lang-toggle::before {
+      content: "🌐 ";
     }
 
     h1 {
@@ -88,13 +96,13 @@
     .note {
       text-align: center;
       font-size: 14px;
-      color: #888;
+      color: #666;
       margin-top: 15px;
     }
   </style>
 
   <script>
-    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m"; 
+    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m";
 
     async function fetchSignupCount() {
       const data = await fetch(`${API_URL}`).then(res => res.json());
@@ -186,8 +194,8 @@
           submit: "提交报名",
           note: "请确认信息准确无误后再提交。",
           fields: [
-            "🧑‍🎓 姓名：", "🚻 性别：", "🏫 学校/单位：", "📞 电话号码：",
-            "✉️ 邮箱：", "🆔 证件号：", "🏨 是否需要住宿：", "📅 是否全程参加："
+            "姓名：", "性别：", "学校/单位：", "电话号码：",
+            "邮箱：", "证件号：", "是否需要住宿：", "是否全程参加："
           ],
           gender: ["男", "女"],
           housing: ["是", "否"],
@@ -200,8 +208,8 @@
           submit: "Submit",
           note: "Please double-check your info before submission.",
           fields: [
-            "🧑‍🎓 Name:", "🚻 Gender:", "🏫 School / Institution:", "📞 Phone:",
-            "✉️ Email:", "🆔 ID Number:", "🏨 Need housing?", "📅 Attend full time?"
+            "Name:", "Gender:", "School / Institution:", "Phone:",
+            "Email:", "ID Number:", "Need housing?", "Attend full time?"
           ],
           gender: ["Male", "Female"],
           housing: ["Yes", "No"],
@@ -240,34 +248,34 @@
       当前已有 <strong id="signup-number">…</strong> 人完成报名
     </div>
     <form id="signup-form" onsubmit="submitForm(event)">
-      <label for="name">🧑‍🎓 姓名：</label>
+      <label for="name">姓名：</label>
       <input type="text" id="name" required>
 
-      <label for="gender">🚻 性别：</label>
+      <label for="gender">性别：</label>
       <select id="gender" required>
         <option value="男">男</option>
         <option value="女">女</option>
       </select>
 
-      <label for="school">🏫 学校/单位：</label>
+      <label for="school">学校/单位：</label>
       <input type="text" id="school" required>
 
-      <label for="tel">📞 电话号码：</label>
+      <label for="tel">电话号码：</label>
       <input type="tel" id="tel" required>
 
-      <label for="email">✉️ 邮箱：</label>
+      <label for="email">邮箱：</label>
       <input type="email" id="email" required>
 
-      <label for="id_number">🆔 证件号：</label>
+      <label for="id_number">证件号：</label>
       <input type="text" id="id_number" required>
 
-      <label for="housing">🏨 是否需要住宿：</label>
+      <label for="housing">是否需要住宿：</label>
       <select id="housing" required>
         <option value="是">是</option>
         <option value="否">否</option>
       </select>
 
-      <label for="attendance">📅 是否全程参加：</label>
+      <label for="attendance">是否全程参加：</label>
       <select id="attendance" required>
         <option value="是">是</option>
         <option value="否">否</option>
