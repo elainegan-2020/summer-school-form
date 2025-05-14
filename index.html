@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>暑期学校报名表</title>
+  <title>暑期学校报名表 / Summer School Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -10,45 +10,67 @@
       background: #f4f6f8;
       margin: 0;
       padding: 0;
+      color: #333;
     }
 
     .container {
       max-width: 600px;
       margin: 60px auto;
-      padding: 30px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #3498db;
     }
 
     h1 {
       text-align: center;
       color: #2c3e50;
       margin-bottom: 30px;
+      font-size: 26px;
     }
 
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #333;
+      margin-top: 20px;
+      font-weight: 600;
     }
 
     input, select {
-      width: 100%;
+      width: 80%;
       padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
+      margin-top: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 16px;
+      background-color: #f9f9f9;
+      transition: border 0.3s, background-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      border-color: #3498db;
+      background-color: #fff;
+      outline: none;
     }
 
     input[type="submit"] {
       background-color: #3498db;
       color: white;
       border: none;
-      margin-top: 25px;
+      width: 50%;
+      margin: 30px auto 0;
+      display: block;
       cursor: pointer;
+      font-weight: bold;
       transition: background-color 0.3s;
     }
 
@@ -56,16 +78,29 @@
       background-color: #2980b9;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px;
-        padding: 20px;
-      }
+    .note {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-top: 15px;
     }
   </style>
+
   <script>
-    function submitForm(event) {
+    const API_URL = "https://sheetdb.io/api/v1/e8zn0tq56sa2m";
+
+    async function submitForm(event) {
       event.preventDefault();
+
+      const idNumber = document.getElementById("id_number").value;
+      const checkUrl = `${API_URL}/search?ID_Number=${encodeURIComponent(idNumber)}`;
+
+      const existing = await fetch(checkUrl).then(res => res.json());
+
+      if (existing.length > 0) {
+        alert(language === "zh" ? "该证件号已经提交过报名，请勿重复提交。" : "This ID number has already been registered.");
+        return;
+      }
 
       const data = {
         data: {
@@ -74,40 +109,86 @@
           School: document.getElementById("school").value,
           Tel: document.getElementById("tel").value,
           Email: document.getElementById("email").value,
-          ID_Number: document.getElementById("id_number").value,
+          ID_Number: idNumber,
           Housing: document.getElementById("housing").value,
           Full_Attendance: document.getElementById("attendance").value
         }
       };
 
-      fetch("https://sheetdb.io/api/v1/e8zn0tq56sa2m", {
+      fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       })
       .then(response => {
         if (response.ok) {
-          alert("报名成功！");
-          document.getElementById("signup-form").reset();
+          window.location.href = "success.html"; // 自动跳转页面
         } else {
-          alert("提交失败，请稍后再试！");
+          alert(language === "zh" ? "提交失败，请稍后再试。" : "Submission failed. Please try again.");
         }
       });
     }
+
+    // 中英文切换
+    let language = "zh";
+
+    function toggleLanguage() {
+      language = (language === "zh") ? "en" : "zh";
+
+      const labels = {
+        zh: {
+          title: "暑期学校报名表",
+          submit: "提交报名",
+          note: "请确认信息准确无误后再提交。",
+          fields: ["姓名：", "性别：", "学校/单位：", "电话号码：", "邮箱：", "证件号：", "是否需要住宿：", "是否全程参加："],
+          gender: ["男", "女"],
+          housing: ["是", "否"],
+          attendance: ["是", "否"]
+        },
+        en: {
+          title: "Summer School Registration",
+          submit: "Submit",
+          note: "Please double-check your info before submission.",
+          fields: ["Name:", "Gender:", "School / Institution:", "Phone:", "Email:", "ID Number:", "Need housing?", "Attend full time?"],
+          gender: ["Male", "Female"],
+          housing: ["Yes", "No"],
+          attendance: ["Yes", "No"]
+        }
+      };
+
+      const L = labels[language];
+      document.querySelector("h1").textContent = L.title;
+      document.querySelector("input[type=submit]").value = L.submit;
+      document.querySelector(".note").textContent = L.note;
+      document.querySelectorAll("label").forEach((el, i) => el.textContent = L.fields[i]);
+
+      const gender = document.getElementById("gender");
+      gender.options[0].text = L.gender[0];
+      gender.options[1].text = L.gender[1];
+
+      const housing = document.getElementById("housing");
+      housing.options[0].text = L.housing[0];
+      housing.options[1].text = L.housing[1];
+
+      const attendance = document.getElementById("attendance");
+      attendance.options[0].text = L.attendance[0];
+      attendance.options[1].text = L.attendance[1];
+
+      document.getElementById("lang").textContent = language === "zh" ? "English" : "中文";
+    }
   </script>
 </head>
-<body>
 
+<body>
   <div class="container">
+    <div id="lang" class="lang-toggle" onclick="toggleLanguage()">English</div>
     <h1>暑期学校报名表</h1>
     <form id="signup-form" onsubmit="submitForm(event)">
       <label for="name">姓名：</label>
       <input type="text" id="name" required>
 
       <label for="gender">性别：</label>
-      <select id="gender">
+      <select id="gender" required>
         <option value="男">男</option>
         <option value="女">女</option>
       </select>
@@ -125,20 +206,20 @@
       <input type="text" id="id_number" required>
 
       <label for="housing">是否需要住宿：</label>
-      <select id="housing">
+      <select id="housing" required>
         <option value="是">是</option>
         <option value="否">否</option>
       </select>
 
       <label for="attendance">是否全程参加：</label>
-      <select id="attendance">
+      <select id="attendance" required>
         <option value="是">是</option>
         <option value="否">否</option>
       </select>
 
       <input type="submit" value="提交报名">
     </form>
+    <div class="note">请确认信息准确无误后再提交。</div>
   </div>
-
 </body>
 </html>
