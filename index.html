@@ -123,16 +123,19 @@
   }
 
       if (!/^\d{11}$/.test(tel)) {
+          alert(language === "zh" ? "请输入正确的11位手机号码" : "Please enter a valid 11-digit phone number.");
         resetSubmit();
         return;
       }
 
       if (!/^[\w\.-]+@[\w\.-]+\.\w+$/.test(email)) {
+          alert(language === "zh" ? "请输入有效的邮箱地址" : "Please enter a valid email.");
         resetSubmit();
         return;
       }
 
       if (!idNumber) {
+          alert(language === "zh" ? "证件号不能为空" : "ID number cannot be empty.");
         resetSubmit();
         return;
       }
@@ -141,6 +144,7 @@
       const existing = await fetch(checkUrl).then(res => res.json());
 
       if (existing.length > 0) {
+          alert(language === "zh" ? "该证件号已经提交过报名，请勿重复提交。" : "This ID number has already been registered.");
         resetSubmit();
         return;
       }
@@ -150,6 +154,7 @@
           Name: name,
           Gender: document.getElementById("gender").value,
           School: document.getElementById("school").value.trim(),
+          Grade:document.getElementById("grade").value,
           Tel: tel,
           Email: email,
           ID_Number: idNumber,
@@ -168,6 +173,7 @@
         if (response.ok) {
   window.location.href = targetPage;
 } else {
+            alert(language === "zh" ? "提交失败，请稍后再试。" : "Submission failed. Please try again.");
           resetSubmit();
         }
       });
@@ -184,7 +190,7 @@
           submit: "提交报名",
           note: "请确认信息准确无误后再提交。",
           fields: [
-            "姓名：", "性别：", "学校/单位：", "电话号码：",
+            "姓名：", "性别：", "学校/单位：", "年级：“，"电话号码：",
             "邮箱：", "证件号：", "是否需要住宿：", "是否全程参加："
           ],
           gender: ["男", "女"],
@@ -196,7 +202,7 @@
           submit: "Submit",
           note: "Please double-check your info before submission.",
           fields: [
-            "Name:", "Gender:", "School / Institution:", "Phone:",
+            "Name:", "Gender:", "School / Institution:", ”Grade：“，"Phone:",
             "Email:", "ID Number:", "Need housing?", "Attend full time?"
           ],
           gender: ["Male", "Female"],
@@ -233,7 +239,8 @@ function toggleOtherGrade(select) {
 <option value="女">女</option>
 </select>
 <label for="school">学校/单位：</label>
-<input id="school" required="" type="text"/><label for="grade">年级：</label><select id="grade" onchange="toggleOtherGrade(this)" required="True"><option value="硕士一年级">硕士一年级</option><option value="硕士二年级">硕士二年级</option><option value="硕士三年级">硕士三年级</option><option value="博士">博士</option><option value="博士后">博士后</option><option value="其他">其他</option></select><input id="grade_other" placeholder="请注明具体年级" style="display:none; margin-top:10px;" type="text"/>
+<input id="school" required="" type="text"/>
+<label for="grade">年级：</label><select id="grade" onchange="toggleOtherGrade(this)" required="True"><option value="硕士一年级">硕士一年级</option><option value="硕士二年级">硕士二年级</option><option value="硕士三年级">硕士三年级</option><option value="博士">博士</option><option value="博士后">博士后</option><option value="其他">其他</option></select><input id="grade_other" placeholder="请注明具体年级" style="display:none; margin-top:10px;" type="text"/>
 <label for="tel">电话号码：</label>
 <input id="tel" required="" type="tel"/>
 <label for="email">邮箱：</label>
