@@ -3,6 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>暑期学校报名表</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #2980b9;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
   <script>
     function submitForm(event) {
       event.preventDefault();
@@ -39,42 +99,46 @@
   </script>
 </head>
 <body>
-  <h1>暑期学校报名表</h1>
-  <form id="signup-form" onsubmit="submitForm(event)">
-    姓名：<br>
-    <input type="text" id="name" required><br><br>
 
-    性别：<br>
-    <select id="gender">
-      <option value="男">男</option>
-      <option value="女">女</option>
-    </select><br><br>
+  <div class="container">
+    <h1>暑期学校报名表</h1>
+    <form id="signup-form" onsubmit="submitForm(event)">
+      <label for="name">姓名：</label>
+      <input type="text" id="name" required>
 
-    学校/单位：<br>
-    <input type="text" id="school" required><br><br>
+      <label for="gender">性别：</label>
+      <select id="gender">
+        <option value="男">男</option>
+        <option value="女">女</option>
+      </select>
 
-    电话号码：<br>
-    <input type="tel" id="tel" required><br><br>
+      <label for="school">学校/单位：</label>
+      <input type="text" id="school" required>
 
-    邮箱：<br>
-    <input type="email" id="email" required><br><br>
+      <label for="tel">电话号码：</label>
+      <input type="tel" id="tel" required>
 
-    证件号：<br>
-    <input type="text" id="id_number" required><br><br>
+      <label for="email">邮箱：</label>
+      <input type="email" id="email" required>
 
-    是否需要住宿：<br>
-    <select id="housing">
-      <option value="是">是</option>
-      <option value="否">否</option>
-    </select><br><br>
+      <label for="id_number">证件号：</label>
+      <input type="text" id="id_number" required>
 
-    是否全程参加：<br>
-    <select id="attendance">
-      <option value="是">是</option>
-      <option value="否">否</option>
-    </select><br><br>
+      <label for="housing">是否需要住宿：</label>
+      <select id="housing">
+        <option value="是">是</option>
+        <option value="否">否</option>
+      </select>
 
-    <input type="submit" value="提交报名">
-  </form>
+      <label for="attendance">是否全程参加：</label>
+      <select id="attendance">
+        <option value="是">是</option>
+        <option value="否">否</option>
+      </select>
+
+      <input type="submit" value="提交报名">
+    </form>
+  </div>
+
 </body>
 </html>
